@@ -1,0 +1,15 @@
+{
+  "name": "@biberklatsche/cd",
+  "version": "0.0.1",
+  "description": "Plugin for autocompletion for the 'cd' command in the Cogno Terminal.",
+  "keywords": [
+    "cogno-plugin"
+  ],
+  "author": "Lars Wolfram",
+  "license": "MIT",
+  "cogno": {
+    "label": "Change Directory",
+    "regexp": "^cd\\s.*",
+    "icon": "📂"
+  }
+}
