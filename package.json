@@ -1,7 +1,7 @@
 {
   "name": "@biberklatsche/cd",
-  "version": "0.0.1",
-  "description": "Plugin for autocompletion for the 'cd' command in the Cogno Terminal.",
+  "version": "0.0.2",
+  "description": "Enhances the Cogno Terminal auto-completer for the CD command.",
   "keywords": [
     "cogno-plugin"
   ],
