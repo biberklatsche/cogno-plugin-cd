@@ -1,5 +1,23 @@
 const fspromise =  require('fs/promises');
 const os = require('os');
+
+let cacheTime;
+let cache = undefined;
+const maxCacheInMillis = 60 * 1000;
+
+function createHash(inputString) {
+    let hash = 0;
+    if (inputString.length === 0) {
+        return hash.toString(10);
+    }
+    for (let i = 0; i < inputString.length; i++) {
+        const char = inputString.charCodeAt(i);
+        hash = (hash << 5) - hash + char;
+        hash &= hash; // Ensure 32-bit signed integer
+    }
+    return hash.toString(10);
+}
+
 function parseArguments(input) {
     const cdArgument = input.replace(/cd\s/g, '').trim();
     const splittedArguments = cdArgument.split('/');
@@ -36,11 +54,24 @@ function constructCommand(dirs, directoryName, pathStyleWindows) {
 async function suggest(data) {
     const argument = parseArguments(data.currentInput.input);
     const searchDir = constructSearchDir(data.directory, argument.dirs);
-    return (await fspromise.readdir(searchDir, { withFileTypes: true }))
-        .filter(file => file.isDirectory() && file.name.toLowerCase().startsWith(argument.search.toLowerCase()))
+    if(!cache || Date.now() - cacheTime > maxCacheInMillis){
+        cache = {};
+        cacheTime = Date.now();
+    }
+    const hash = createHash(searchDir);
+    let dirNames;
+    if(!!cache[hash]) {
+        dirNames = cache[hash];
+    } else {
+        dirNames = (await fspromise.readdir(searchDir, { withFileTypes: true }))
+            .filter(file => file.isDirectory()).map(directory => directory.name);
+        cache[hash] = dirNames;
+    }
+    return dirNames
+        .filter(dirname => dirname.toLowerCase().startsWith(argument.search.toLowerCase()))
         .map(directory => {
-            const label = directory.name;
-            const command = constructCommand(argument.dirs, directory.name, data.location.shellType.toLowerCase().startsWith('powershell'));
+            const label = directory;
+            const command = constructCommand(argument.dirs, directory, data.location.shellType.toLowerCase().startsWith('powershell'));
             return {label, command};
         });
 }
