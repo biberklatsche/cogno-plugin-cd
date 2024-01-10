@@ -35,7 +35,7 @@ function constructSearchDir(dirsA, dirsB) {
     const directories = [...d,  ...dirsB];
     if(os.platform() === 'win32') {
         const drive = directories[0];
-        const path = directories.reduce((a, v, currentIndex) => (currentIndex > 1 ? a : '') + (currentIndex > 1 ? '\\' : '') + v.replace(' ', '` '), '');
+        const path = directories.reduce((a, v, currentIndex) => currentIndex === 0 ? '' : (currentIndex > 1 ? a : '') + (currentIndex > 1 ? '\\' : '') + v.replace(' ', '` '), '');
         return `${drive}:\\${path}`;
     } else {
         return directories.reduce((a, v, currentIndex) => a + '/' + v.replace(' ', '\\ '), '');
