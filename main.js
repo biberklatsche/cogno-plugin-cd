@@ -52,8 +52,8 @@ function constructCommand(dirs, directoryName, pathStyleWindows) {
 }
 
 async function suggest(data) {
-    const argument = parseArguments(data.currentInput.input);
-    const searchDir = constructSearchDir(data.directory, argument.dirs);
+    const argument = parseArguments(data.input);
+    const searchDir = constructSearchDir(data.directories, argument.dirs);
     if(!cache || Date.now() - cacheTime > maxCacheInMillis){
         cache = {};
         cacheTime = Date.now();
