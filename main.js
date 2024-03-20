@@ -20,21 +20,23 @@ function createHash(inputString) {
 
 function parseArguments(input) {
     const cdArgument = input.replace(/cd\s/g, '').trim();
-    const splittedArguments = cdArgument.split('/');
-    const search =  splittedArguments[splittedArguments.length - 1].trim();
+    const splittedArguments = cdArgument.split('/').filter(s => !!s);
+    const search =  splittedArguments.length > 0 ? splittedArguments[splittedArguments.length - 1].trim() : "";
     const dirs =  splittedArguments.length > 1 ? splittedArguments.splice(0, splittedArguments.length - 1) : [];
     return {search, dirs};
 }
 
 function isLinuxSubsystem(dirs) {
-    return os.platform() === 'win32' && dirs[0] == 'mnt';
+    return os.platform() === 'win32' && dirs.length > 0 && dirs[0] == 'mnt';
 }
 
 function constructSearchDir(dirsA, dirsB) {
     const d = isLinuxSubsystem(dirsA) ? dirsA.slice(1) : dirsA;
     const directories = [...d,  ...dirsB];
     if(os.platform() === 'win32') {
+        if(directories.length === 0) return;
         const drive = directories[0];
+        if(drive.length > 1) return;
         const path = directories.reduce((a, v, currentIndex) => currentIndex === 0 ? '' : (currentIndex > 1 ? a : '') + (currentIndex > 1 ? '\\' : '') + v.replace(' ', '` '), '');
         return `${drive}:\\${path}`;
     } else {
@@ -54,6 +56,7 @@ function constructCommand(dirs, directoryName, pathStyleWindows) {
 async function suggest(data) {
     const argument = parseArguments(data.input);
     const searchDir = constructSearchDir(data.directories, argument.dirs);
+    if(searchDir === undefined) return [];
     if(!cache || Date.now() - cacheTime > maxCacheInMillis){
         cache = {};
         cacheTime = Date.now();
