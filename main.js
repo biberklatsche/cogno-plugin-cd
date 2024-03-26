@@ -19,8 +19,8 @@ function createHash(inputString) {
 }
 
 function parseArguments(input) {
-    const cdArgument = input.replace(/cd\s/g, '').trim();
-    const splittedArguments = cdArgument.split('/').filter(s => !!s);
+    const cdArgument = input.replace(/cd\s/g, '').replace(/\\/g, '/').replace(/^\//g, '').trim();
+    const splittedArguments = cdArgument.split('/');
     const search =  splittedArguments.length > 0 ? splittedArguments[splittedArguments.length - 1].trim() : "";
     const dirs =  splittedArguments.length > 1 ? splittedArguments.splice(0, splittedArguments.length - 1) : [];
     return {search, dirs};
