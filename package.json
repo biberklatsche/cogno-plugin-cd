@@ -1,6 +1,6 @@
 {
   "name": "@biberklatsche/cd",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Enhances the auto-completer for the CD command.",
   "keywords": [
     "cogno-plugin"
@@ -8,7 +8,7 @@
   "author": "Lars Wolfram",
   "license": "MIT",
   "cogno": {
-    "label": "Change Directory",
+    "label": "cd",
     "regexp": "^cd\\s.*",
     "icon": "📂"
   }
